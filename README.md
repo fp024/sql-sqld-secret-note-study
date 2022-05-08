@@ -19,18 +19,18 @@
 
 ### Part 1 실습 환경 구축
 
-1. [오라클 DBMS 실습 환경 구축](chap01)
-2. [실습 데이터 구성](chap02)
+1. [오라클 DBMS 실습 환경 구축](Scripts/chap01)
+2. [실습 데이터 구성](Scripts/chap02)
 
 ### Part 2 데이터 모델링의 이해
 
-3. [데이터 모델링의 이해](chap03)
-4. [데이터 모델과 성능](chap04)
+3. [데이터 모델링의 이해](Scripts/chap03)
+4. [데이터 모델과 성능](Scripts/chap04)
 
 ### Part 3 SQL 기본 및 활용
 
-5. [SQL 기본](chap05)
-6. [SQL 활용](chap06)
-7. [SQL 최적화 기본 원리](chap07)
-8. [시험직전 비밀노트](chap08)
+5. [SQL 기본](Scripts/chap05)
+6. [SQL 활용](Scripts/chap06)
+7. [SQL 최적화 기본 원리](Scripts/chap07)
+8. [시험직전 비밀노트](Scripts/chap08)
 
