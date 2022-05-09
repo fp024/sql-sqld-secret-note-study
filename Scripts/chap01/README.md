@@ -16,7 +16,8 @@
   docker pull wnameless/oracle-xe-11g-r2
   
   # 원격데이터베이스 연결 허용, 외부 포트는 11521 사용, 타임존은 호스트 서버 설정 파일 사용하도록 맞춤
-  docker run --name oracle-xe-11g-r2 -v /etc/localtime:/etc/localtime:ro -d -p 11521:1521 -e ORACLE_ALLOW_REMOTE=true wnameless/oracle-xe-11g-r2
+  # SQLD 디렉토리는 데이터 덤프 편하게 연결해둠.
+  docker run --name oracle-xe-11g-r2 -v /etc/localtime:/etc/localtime:ro -v /home/fp024/SQLD:/SQLD -d -p 11521:1521 -e ORACLE_ALLOW_REMOTE=true wnameless/oracle-xe-11g-r2
   ```
   * 최초 기본 비밀번호: oracle
 
@@ -84,15 +85,15 @@ sqlplus "/as SYSDBA"
 그래서 SYS 계정으로 명시했다/
 
 ```bash
- sqlplus "SYS /AS SYSDBA"
+ sqlplus SYS AS SYSDBA
 ```
 
 
 
 ```sql
-SQL> SET linesize 200   -- 한 화면에 표시되는 SQL 명령문의 출력결과에 대한 행크기
-SQL> SET timing on      -- SQL 명령문을 실행하는 데 소요된 시간을 출력
-SQL> SET serveroutput on   -- PL/SQL문 실행시 DBMS_OUTPUT.PUT_LINE()으로 로그를 남길경우 
+SQL> SET linesize 200;   -- 한 화면에 표시되는 SQL 명령문의 출력결과에 대한 행크기
+SQL> SET timing on;      -- SQL 명령문을 실행하는 데 소요된 시간을 출력
+SQL> SET serveroutput on;   -- PL/SQL문 실행시 DBMS_OUTPUT.PUT_LINE()으로 로그를 남길경우 
                            -- 이걸 지정해야 로그가 정상 출력됨
 SQL> SELECT * FROM DUAL;
 
@@ -106,23 +107,87 @@ SQL>
 
 
 
-## 문자셋 (이부분은 그냥 AL32UTF8 사용 유지하자!)
+## 문자셋 (이부분은 그냥 AL32UTF8 사용 유지하려고 했는데... 예제 DB적용시 문제가 있음 😓 )
 
 * NLS 상태 확인
 
   ```sql
   SELECT *
   FROM sys.props$
-  WHERE name = 'NLS_CHARACTERSET';
+  WHERE name = 'NLS_LANGUAGE';
   ```
 
   | NAME              | VALUE$   | COMMENT$      |
   | :---------------- | :------- | :------------ |
   | NLS\_CHARACTERSET | AL32UTF8 | Character set |
 
-책에서는 MS949로 바꾸라고 하는데, 내 환경에서는 일부러 바꿀 필요는 없을 것 같다.  일단은 AL32UTF8 인 상태로 사용해보자
+책에서는 MS949로 바꾸라고 하는데, 내 환경에서는 일부러 바꿀 필요는 없을 것 같다.  일단은 AL32UTF8 인 상태로 진행하려고 했는데... 예제 DB적용시 컬럼 사이즈 문제 때문에, MS949 쓰기로 했다.
 
 
+
+* 시스템 속성 변경 - 문자 집합 속성
+
+  ```sql
+  UPDATE SYS.PROPS$
+     SET VALUE$='KO16MSWIN949'
+   WHERE NAME='NLS_CHARACTERSET';
+   
+  UPDATE SYS.PROPS$
+     SET VALUE$='KO16MSWIN949'
+   WHERE NAME='NLS_NCHAR_CHARACTERSET';
+   
+   UPDATE SYS.PROPS$
+      SET VALUE$='KOREAN_KOREA.KO16MSWIN949'
+    WHERE NAME='NLS_LANGUAGE';
+    
+  COMMIT;
+  ```
+
+  
+
+* 오라클 DBMS 중지
+
+  ```sql
+  SQL> SHUTDOWN IMMEDIATE;
+  ```
+
+* MOUNT 모드로 오라클 DBMS를 시작
+
+  ```sql
+  SQL> STARTUP MOUNT;
+  ```
+
+* 문자집합 설정 스크립트 입력
+
+  ```sql
+  ALTER SYSTEM ENABLE RESTRICTED SESSION;
+  ALTER SYSTEM SET JOB_QUEUE_PROCESSES = 0;
+  ALTER SYSTEM SET AQ_TM_PROCESSES = 0;
+  ALTER DATABASE OPEN;
+  ALTER DATABASE CHARACTER SET KO16MSWIN949;
+  ```
+
+* 오라클 DBMS 중지
+
+  ```sql
+  SQL> SHUTDOWN IMMEDIATE;
+  ```
+
+* 오라클 DBMS 시작
+
+  ```sql
+  SQL> STARTUP;
+  ```
+
+* 환경변수 설정
+
+  컨테이너의 `/etc/bash.bashrc`  파일에 설정
+
+  ```bash
+  export NLS_LANG=KOREAN_KOREA.KO16MSWIN949
+  ```
+
+  
 
 ## GUI 도구
 
@@ -140,3 +205,5 @@ SQL>
 ## 의견
 
 Oracle을 Docker로 간단하게 설치하였는데, 앞으로의 책 진행에 문제가 없을 것 같다...😄
+
+KO16MSWIN949 의 두번째 O가 숫자 0인줄 알고 고생했다. 😓 책에는 0과 O가 정확하게 구분되는 폰트를 넣어주시는 것이 좋을 것 같다.
