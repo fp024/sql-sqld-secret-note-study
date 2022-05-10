@@ -24,6 +24,8 @@ SQLD 계정이 사용할 테이블 스페이스와 임시 테이블 스페이스
 
   `/u01/app/oracle/oradata/XE/SQLD_TEMP.dbf`
 
+🎇 자세한 내용은 [SYS-Script.sql](SYS-Script.sql)을 참조할 것.
+
 
 
 ## 2.2 실습 데이터 모델 소개
@@ -67,6 +69,13 @@ SQLD 계정이 사용할 테이블 스페이스와 임시 테이블 스페이스
 2. 저자님 덤프파일을 받아 WSL2 Ubuntu Home에 옮겨둔다.
 
    * https://www.hanbit.co.kr/lib/examFileDown.php?hed_idx=5927
+
+     ```bash
+     $ wget -O EXPORT_SQLD.zip https://www.hanbit.co.kr/lib/examFileDown.php?hed_idx=5927
+     $ unzip EXPORT_SQLD.zip
+     ```
+
+     별도 가상머신 Ubuntu에도 Docker를 설치해서 사용하고 있는데, 이때는 wget 으로 직접 받아 unzip으로 압축을 풀었다.
    * Windows 11이라면 탐색기에서 복사 가능함, Windows 10 이라면 WSL안에서 미리 마운트 뒤어있는 경로(`/mnt/c/...`)로 가져오는 식으로 하면 될 것 같다.
 
 3. WSL2 Ubuntu Home에 옮겨둔 파일을 컨테이너의 /SQLD 디렉토리로 복사한다.
@@ -218,3 +227,11 @@ SQLD 계정이 사용할 테이블 스페이스와 임시 테이블 스페이스
 ## 2.4 SQL 실습환경 구축 과정 소개
 
 * 이부분은 저자님께서 책의 모든과정을 학습 후에 한번 읽어보라고 하셨다.
+
+
+
+
+
+## 의견
+
+WSL2를 사용하는 Docker Desktop 을 사용한 것보다 Hyper-V Ubuntu에 Docker 설치해서 사용하는 것이 왠지 더 빠른 것 같다. 임포트 덤프 속도 차이가 좀 있던 거 같음.

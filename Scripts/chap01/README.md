@@ -125,7 +125,7 @@ SQL>
 
 
 
-* 시스템 속성 변경 - 문자 집합 속성
+* 시스템 속성 변경 - 문자 집합 속성 - SYS 계정에서 실행
 
   ```sql
   UPDATE SYS.PROPS$
@@ -187,6 +187,16 @@ SQL>
   export NLS_LANG=KOREAN_KOREA.KO16MSWIN949
   ```
 
+  Oracle 컨테이너가 최소화버전이라 vim또는 nano가 설치되어있지 않은데 설치하도록 하자!
+  
+  ```bash
+  $ apt update
+  $ apt upgrade -y
+  $ apt install vim
+  ```
+  
+  업그레이드(apt upgrade)는 그냥 했음..
+  
   
 
 ## GUI 도구

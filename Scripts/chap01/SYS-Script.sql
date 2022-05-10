@@ -1,4 +1,9 @@
 /**
+ * DB 날짜/시간 확인
+ */
+SELECT SYSDATE FROM DUAL;
+
+/**
  * 시스템 속성 변경 - 문자 집합 속성
  */
 UPDATE SYS.PROPS$
